@@ -10,6 +10,7 @@ CEntity::~CEntity() {
 
 void CEntity::Render(SDL_Rect* clip, SDL_Point* center, SDL_RendererFlip fliptype){
 	// Base Rendering function
+
 	m_EntityTexture.RenderTexture(m_Position, nullptr, m_dAngle, center, fliptype);
 }
 

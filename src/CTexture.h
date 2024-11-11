@@ -28,8 +28,8 @@ public:
 
 
 	void SetScale(int scale);
-	int GetWidth() { return this->m_nWidth; };
-	int GetHeight() { return this->m_nHeight;};
+	int GetWidth() { return this->m_nWidth * m_nScale; };
+	int GetHeight() { return this->m_nHeight * m_nScale;};
 
 	
 	void Cleanup();

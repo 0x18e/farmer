@@ -23,14 +23,20 @@ private:
 	//std::vector<std::vector<int>> grid;
 	CBasePlayer player;
 	std::vector<CEntity*> m_pEntities;
-	int tile_size = 32;
-	static const int grid_width = 1280 /32;
-	static const int grid_height = 800 /32;
-	SDL_Rect tiles[grid_width][grid_height];
+	int tile_size = 64;
+	int grid_width;
+	int grid_height;
+	//SDL_Rect tiles[grid_width][grid_height];
+	//
+	std::vector<std::vector<SDL_Rect>> tiles;
+	SDL_Texture* adj_texture;
 	SDL_Rect tile1;
+	SDL_Rect tile2;
 	std::vector<Tile> grid;
 	SDL_Texture* tile_texture;
-	void FindPlayerGrid();
+	Vector2 FindPlayerGrid();
+	void AddRow();
+	void CheckAdjacency(SDL_Rect& current_Tile);
 
 
 	// Set local window widths and heights

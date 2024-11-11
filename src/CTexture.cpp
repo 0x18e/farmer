@@ -15,8 +15,7 @@ bool CTextureHandler::LoadTexture(const char* path, std::string id) {
 	else {
 
 		SDL_QueryTexture(tmp_texture, nullptr, nullptr, &m_nWidth, &m_nHeight);
-		m_nWidth *= m_nScale;
-		m_nHeight *= m_nScale;
+
 	}
 	m_Textures[id] = tmp_texture;
 	return m_Textures[id] != nullptr;
@@ -25,7 +24,7 @@ bool CTextureHandler::LoadTexture(const char* path, std::string id) {
 
 void CTextureHandler::RenderTexture(Vector2 point, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip fliptype) {
 	// We subtract the 2 points with their texture widths & heights in order to center them
-	SDL_Rect Rendering_Area { (int)point.x - m_nWidth/2, (int)point.y - m_nHeight/2, m_nWidth, m_nHeight};
+	SDL_Rect Rendering_Area { (int)point.x - (m_nWidth* m_nScale)/2, (int)point.y - (m_nHeight*m_nScale)/2, m_nWidth*m_nScale, m_nHeight*m_nScale};
 	if (clip != nullptr) {
 		Rendering_Area.h = clip->h;
 		Rendering_Area.w = clip->w;
@@ -36,8 +35,6 @@ void CTextureHandler::RenderTexture(Vector2 point, SDL_Rect* clip, double angle,
 void CTextureHandler::SetCurrentTexture(std::string id) {
 	m_CurrentTexture = m_Textures[id];
 	SDL_QueryTexture(m_CurrentTexture, nullptr, nullptr, &m_nWidth, &m_nHeight);
-	m_nWidth *= m_nScale;
-	m_nHeight *= m_nScale;
 }
 
 
@@ -50,8 +47,6 @@ SDL_Texture* CTextureHandler::GetTexture() const {
 
 void CTextureHandler::SetScale(int scale) {
 	m_nScale = scale;
-	m_nWidth *= m_nScale;
-	m_nHeight *= m_nScale;
 }
 
 void CTextureHandler::Cleanup() {

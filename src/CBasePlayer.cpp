@@ -8,12 +8,13 @@ CBasePlayer::CBasePlayer() {
 void CBasePlayer::Init() {
 
 
-	m_Position.x = 400;
-	m_Position.y = 400;
+	
 	this->m_EntityTexture.SetScale(5);
 	m_EntityTexture.LoadTexture("sprites/Newton.png", "newton");
 	m_EntityTexture.SetCurrentTexture("newton");
-	
+	m_Position.x = 400 + (this->GetDimensions().x / 2);
+	m_Position.y = 400 + (this->GetDimensions().y / 2);
+
 }
 
 
