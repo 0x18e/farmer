@@ -1,4 +1,5 @@
 #pragma once
+#include "SDL_render.h"
 #include "Utilities.h"
 #include<SDL.h>
 #include "CEntity.h"
@@ -8,12 +9,15 @@
 
 enum TileType {
 	EMPTY,
-	FLOOR
+	FLOOR,
+  WALL,
 };
-struct Tile {
-	int x, y;
-	TileType type;
-	CTextureHandler texture;
+struct Tile { 
+  Vector2 position;
+  Vector2 dimensions;
+
+  TileType type;
+	CTextureHandler texture; // This is what the texture holds
 };
 
 class CLogic {
@@ -26,10 +30,17 @@ private:
 	int tile_size = 64;
 	int grid_width;
 	int grid_height;
+  SDL_Texture * m_CurrentTexture;
 	//SDL_Rect tiles[grid_width][grid_height];
 	//
-	std::vector<std::vector<SDL_Rect>> tiles;
-	SDL_Texture* adj_texture;
+	// std::vector<std::vector<SDL_Rect>> tiles;
+  // To place a tile, we need to find out what tile type it is,
+  // then its position relative to the players mouse, and if its in an adjacent block
+  void PlaceTile(const TileType& tiletype, const Tile tile_pos);
+  // Now to write this whole thing using my own stuff
+  std::vector<std::vector<Tile>> tiles;
+
+  SDL_Texture* adj_texture;
 	SDL_Rect tile1;
 	SDL_Rect tile2;
 	std::vector<Tile> grid;

@@ -1,4 +1,7 @@
 #include "CLogic.h"
+#include "SDL_render.h"
+#include "Utilities.h"
+#include <cmath>
 
 
 
@@ -18,12 +21,13 @@ void CLogic::Init(SDL_Renderer* renderer, int WindowWidth, int WindowHeight) {
 	tile2.w = 32;
 	tile2.h = 32;
 
-	
+  
+  m_CurrentTexture = nullptr; 
 	SDL_Surface* temp = IMG_Load("sprites/Tile_Select.png");
 	tile_texture = SDL_CreateTextureFromSurface(CRenderer::Get().GetRenderer(), temp);
 	SDL_Surface* temp2 = IMG_Load("sprites/bloc.png");
 	adj_texture = SDL_CreateTextureFromSurface(CRenderer::Get().GetRenderer(), temp2);
-
+  
 
 	SDL_FreeSurface(temp);
 	SDL_FreeSurface(temp2);
@@ -55,8 +59,24 @@ void CLogic::DrawGrid() {
 		for (int x = 0; x < tiles[y].size(); ++x) {
 			// Check for adjacent tiles here
 			// LOG("Drawing tile at " << tiles[x][y].x << " and " << tiles[x][y].y);
-			
-			SDL_RenderCopy(CRenderer::Get().GetRenderer(), tile_texture, &tile1, &tiles[y][x]);
+	    SDL_Rect dstRect;
+      dstRect.x = tiles[y][x].position.x;
+      dstRect.y = tiles[y][x].position.y;
+      dstRect.w = tiles[y][x].dimensions.x;
+      dstRect.h = tiles[y][x].dimensions.y;
+       
+      if (tiles[y][x].type == FLOOR) {
+        // Render floor tile
+        m_CurrentTexture = tile_texture;
+      }
+      else if (tiles[y][x].type ==WALL)
+      {
+        LOG("typeis wall");
+        m_CurrentTexture = adj_texture;
+      }
+      SDL_RenderCopy(CRenderer::Get().GetRenderer(), 
+                  m_CurrentTexture, 
+                  &tile1, &dstRect);
 
 
 			// Adjacency 
@@ -71,14 +91,24 @@ void CLogic::InitGrid() {
 	// initialize the grid here
 
 	for (int x = 0; x < grid_width; x++) {
-		std::vector<SDL_Rect> row;
+		std::vector<Tile> row;
 		for (int y = 0; y < grid_height; ++y) {
-			SDL_Rect rect;
-			rect.x = x * tile_size; // this is multiplied by the tile size
-			rect.y = y * tile_size;
-			rect.w = tile_size;
-			rect.h = tile_size;
-			row.push_back(rect);
+			Tile tile;
+			tile.position.x = x * tile_size; // this is multiplied by the tile size
+			tile.position.y = y * tile_size;
+			tile.dimensions.x = tile_size;
+			tile.dimensions.y = tile_size;
+      int rand = GetRandomNumber(0, 2);
+      if (rand == 0){
+        LOG("random!");
+        tile.type = FLOOR;
+      }
+      else{
+        LOG("wall!");
+        tile.type = WALL;
+      }
+      
+			row.push_back(tile);
 		}
 		tiles.push_back(row);
 	}
@@ -103,15 +133,15 @@ void CLogic::AddRow() {
 	// this works
 
 	// now we just need to get the final tiles last position
-	std::vector<SDL_Rect> final_column = tiles[tiles.size() - 1]; // this goes through and gets the last
+	// std::vector<SDL_Rect> final_column = tiles[tiles.size() - 1]; // this goes through and gets the last
 	// rows size
-	SDL_Rect final_tile = final_column[final_column.size() - 1];
-	SDL_Rect tile{ final_tile.x + 32, final_tile.y, 32, 32 };
-	SDL_Rect tile2{ final_tile.x, final_tile.y+32, 32, 32 };
-
+	// SDL_Rect final_tile = final_column[final_column.size() - 1];
+	// Tile tile{ Vector2(final_tile.x + 32, final_tile.y), Vector2(32, 32) };
+	// SDL_Rect tile2{ final_tile.x, final_tile.y+32, 32, 32 };
+  // this is a whole load of garbo code
 	//LOG("final tile position " <<  final_x << " " << final_y);
-	tiles[tiles.size() - 1].push_back(tile);
-	tiles[tiles.size() - 1].push_back(tile);
+	// tiles[tiles.size() - 1].push_back(tile);
+	// tiles[tiles.size() - 1].push_back(tile);
 
 }
 
@@ -119,19 +149,8 @@ void CLogic::AddRow() {
 
 void CLogic::DrawAdjacency(Vector2 tile_position) {
   		Vector2 player_tile_positions = this->FindPlayerGrid();
-			SDL_Rect& left_tile = tiles[player_tile_positions.x - 1][player_tile_positions.y];
-			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &left_tile);
-			SDL_Rect& right_tile = tiles[player_tile_positions.x + 1][player_tile_positions.y];
-			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &right_tile);
 
-
-			SDL_Rect& bottom_tile = tiles[player_tile_positions.x][player_tile_positions.y + 1];
-			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &bottom_tile);
-			SDL_Rect& up_tile = tiles[player_tile_positions.x][player_tile_positions.y - 1];
-			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &up_tile);
-
-			SDL_SetRenderDrawColor(CRenderer::Get().GetRenderer(), 0, 255, 0, 0);
-			
+			SDL_SetRenderDrawColor(CRenderer::Get().GetRenderer(), 0, 255, 0, 0);			
 	
   
 }
@@ -147,7 +166,7 @@ Vector2 CLogic::FindPlayerGrid() {
 
 	// Ensure the indices are within the grid bounds
 	if (tileX >= 0 && tileX < grid_width && tileY >= 0 && tileY < grid_height) {
-		SDL_Rect currentTile = tiles[tileX][tileY];
+		Tile currentTile = tiles[tileX][tileY];
 		//LOG("player is currently in " << currentTile.x << " " << currentTile.y);
 		return Vector2(tileX, tileY);
 	}
@@ -223,9 +242,11 @@ void CLogic::Cleanup() {
 }
 CLogic::~CLogic() {
 	LOG("Cleaning up logic..");
+
+  SDL_DestroyTexture(m_CurrentTexture);
 	SDL_DestroyTexture(tile_texture);
 	SDL_DestroyTexture(adj_texture);
-
+  
 	for (auto& grid_texture : grid) {
 		grid_texture.texture.Cleanup();
 	}
