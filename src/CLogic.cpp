@@ -32,13 +32,13 @@ void CLogic::Init(SDL_Renderer* renderer, int WindowWidth, int WindowHeight) {
 	m_nWindowHeight = WindowHeight;
 	grid_width = m_nWindowWidth / tile_size;
 	grid_height = m_nWindowHeight / tile_size;
-	grid_width += 5;
-	grid_height += 5;
+	// grid_width += 5;
+	// grid_height += 5;
 
-	player.Init();
-	
+	player.Init();	
 	m_pEntities.push_back(&player);
 	InitGrid();
+  
 }
 
 void CLogic::AdjustResolution(int x, int y) {
@@ -60,26 +60,7 @@ void CLogic::DrawGrid() {
 
 
 			// Adjacency 
-			Vector2 player_tile_positions = this->FindPlayerGrid();
-			SDL_Rect& left_tile = tiles[player_tile_positions.x - 1][player_tile_positions.y];
-			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &left_tile);
-			SDL_Rect& right_tile = tiles[player_tile_positions.x + 1][player_tile_positions.y];
-			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &right_tile);
-
-
-			SDL_Rect& bottom_tile = tiles[player_tile_positions.x][player_tile_positions.y + 1];
-			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &bottom_tile);
-			SDL_Rect& up_tile = tiles[player_tile_positions.x][player_tile_positions.y - 1];
-			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &up_tile);
-
-			SDL_SetRenderDrawColor(CRenderer::Get().GetRenderer(), 0, 255, 0, 0);
-			
-			for (int i = 0; i < 50; ++i) {
-				SDL_RenderDrawPoint(CRenderer::Get().GetRenderer(),
-					player.GetPosition().x + i,
-					player.GetPosition().y + i);
-			}
-		
+	
 		
 		}
 	}
@@ -134,6 +115,26 @@ void CLogic::AddRow() {
 
 }
 
+
+
+void CLogic::DrawAdjacency(Vector2 tile_position) {
+  		Vector2 player_tile_positions = this->FindPlayerGrid();
+			SDL_Rect& left_tile = tiles[player_tile_positions.x - 1][player_tile_positions.y];
+			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &left_tile);
+			SDL_Rect& right_tile = tiles[player_tile_positions.x + 1][player_tile_positions.y];
+			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &right_tile);
+
+
+			SDL_Rect& bottom_tile = tiles[player_tile_positions.x][player_tile_positions.y + 1];
+			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &bottom_tile);
+			SDL_Rect& up_tile = tiles[player_tile_positions.x][player_tile_positions.y - 1];
+			SDL_RenderCopy(CRenderer::Get().GetRenderer(), adj_texture, &tile2, &up_tile);
+
+			SDL_SetRenderDrawColor(CRenderer::Get().GetRenderer(), 0, 255, 0, 0);
+			
+	
+  
+}
 Vector2 CLogic::FindPlayerGrid() {
 	// since the tile is 32x32 pixels
 	// we divide the players current position relative to the middle of their sprite
@@ -163,6 +164,7 @@ void CLogic::Update(float dt) {
 	
 	player.Move(dt);
 	//this->FindPlayerGrid();
+  
 }
 
 // Draw calls
@@ -173,7 +175,7 @@ void CLogic::Render(){
 
 	// Rendering entities
 	SDL_SetRenderDrawColor(CRenderer::Get().GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-
+  
 	
 	
 
@@ -182,7 +184,7 @@ void CLogic::Render(){
 	}
 	
 	DrawGrid();
-	
+  DrawAdjacency(Vector2(0, 0));	
 
 	// Presenting entities
 	SDL_RenderPresent(CRenderer::Get().GetRenderer());

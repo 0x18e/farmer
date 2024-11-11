@@ -36,7 +36,7 @@ private:
 	SDL_Texture* tile_texture;
 	Vector2 FindPlayerGrid();
 	void AddRow();
-	void CheckAdjacency(SDL_Rect& current_Tile);
+	void DrawAdjacency(Vector2);
 
 
 	// Set local window widths and heights
