@@ -39,10 +39,9 @@ void CLogic::Init(SDL_Renderer* renderer, int WindowWidth, int WindowHeight) {
 	// grid_width += 5;
 	// grid_height += 5;
 
-	player.Init();	
+	player.Init();
 	m_pEntities.push_back(&player);
 	InitGrid();
-  
 }
 
 void CLogic::AdjustResolution(int x, int y) {
@@ -69,9 +68,7 @@ void CLogic::DrawGrid() {
         // Render floor tile
         m_CurrentTexture = tile_texture;
       }
-      else if (tiles[y][x].type ==WALL)
-      {
-        LOG("typeis wall");
+      else if (tiles[y][x].type ==WALL){
         m_CurrentTexture = adj_texture;
       }
       SDL_RenderCopy(CRenderer::Get().GetRenderer(), 
@@ -100,11 +97,9 @@ void CLogic::InitGrid() {
 			tile.dimensions.y = tile_size;
       int rand = GetRandomNumber(0, 2);
       if (rand == 0){
-        LOG("random!");
         tile.type = FLOOR;
       }
       else{
-        LOG("wall!");
         tile.type = WALL;
       }
       
