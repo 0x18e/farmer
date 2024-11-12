@@ -36,7 +36,9 @@ private:
 	// std::vector<std::vector<SDL_Rect>> tiles;
   // To place a tile, we need to find out what tile type it is,
   // then its position relative to the players mouse, and if its in an adjacent block
-  void PlaceTile(const TileType& tiletype, const Tile tile_pos);
+  void PlaceTile(const TileType& tiletype, const Vector2 &tile_pos);
+
+
   // Now to write this whole thing using my own stuff
   std::vector<std::vector<Tile>> tiles;
 
@@ -45,7 +47,7 @@ private:
 	SDL_Rect tile2;
 	std::vector<Tile> grid;
 	SDL_Texture* tile_texture;
-	Vector2 FindPlayerGrid();
+	Vector2 FindInGrid(Vector2 item);
 	void AddRow();
 	void DrawAdjacency(Vector2);
 

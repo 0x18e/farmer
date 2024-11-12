@@ -34,3 +34,23 @@ public:
 	
 	void Cleanup();
 };
+// This will be a simpler version of the texture handler
+// The texture handler handles textures for the entire game
+class CTexture {
+
+  private:
+  SDL_Texture* m_Texture;  // This will be the main texture of the tile
+  CTexture() : m_Texture(nullptr) {}; 
+public:
+
+  void SetTexture(SDL_Texture* text){
+    if (text != nullptr){
+      this->m_Texture = text;
+    }
+  }
+  
+  ~CTexture(); 
+    
+
+
+};

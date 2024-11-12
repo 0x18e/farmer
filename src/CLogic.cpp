@@ -1,4 +1,6 @@
 #include "CLogic.h"
+#include "SDL_events.h"
+#include "SDL_mouse.h"
 #include "SDL_render.h"
 #include "Utilities.h"
 #include <cmath>
@@ -83,10 +85,34 @@ void CLogic::DrawGrid() {
 	}
 }
 
+
+
+
+
+void CLogic::PlaceTile(const TileType& tiletype, const Vector2 &tile_pos) {
+  // We're given the tile type
+  // and the tile_position to be replaced
+  Vector2 pos = this->FindInGrid(tile_pos); 
+  tiles[pos.x][pos.y].type = WALL;
+  // This changes the type of the tile
+  /*
+   *
+   * a more realistic use here would be to have one base class Tile, and then define sub classes
+   * an example of this would be how we could have one main tile, and its base type would be empty
+   * if its type is empty, its own render function would just render the tile as its type
+   * a subclass would be a grass tile, where if the grass tile responds to time, where as time increase
+   * its type could change, could be withered grass, or something like that
+   * another idea is how changing the tile to be a seeded tile, a tile that has a seed growing in it
+   *
+   */
+
+  
+}
+
 void CLogic::InitGrid() {
 
 	// initialize the grid here
-
+  
 	for (int x = 0; x < grid_width; x++) {
 		std::vector<Tile> row;
 		for (int y = 0; y < grid_height; ++y) {
@@ -143,21 +169,18 @@ void CLogic::AddRow() {
 
 
 void CLogic::DrawAdjacency(Vector2 tile_position) {
-  		Vector2 player_tile_positions = this->FindPlayerGrid();
-
+  		Vector2 player_tile_positions = this->FindInGrid(player.GetPosition());
+      
 			SDL_SetRenderDrawColor(CRenderer::Get().GetRenderer(), 0, 255, 0, 0);			
 	
   
 }
-Vector2 CLogic::FindPlayerGrid() {
-	// since the tile is 32x32 pixels
-	// we divide the players current position relative to the middle of their sprite
-	// by the tile size
-	Vector2 player_position_origin = player.GetPosition();
+Vector2 CLogic::FindInGrid(Vector2 pos) {
+	// Vector2 player_position_origin = player.GetPosition();
 
 
-	int tileX = player_position_origin.x / tile_size;
-	int tileY = player_position_origin.y / tile_size;
+	int tileX = pos.x / tile_size;
+	int tileY = pos.y / tile_size;
 
 	// Ensure the indices are within the grid bounds
 	if (tileX >= 0 && tileX < grid_width && tileY >= 0 && tileY < grid_height) {
@@ -178,6 +201,10 @@ void CLogic::Update(float dt) {
 	
 	player.Move(dt);
 	//this->FindPlayerGrid();
+  // we should check adjacent tiles, and if the player clicks and wishes to place a tile
+  // we check if the adjacent tiles are the same position as the tile of the mouse
+  // then we switch out the tiles using the place tiles if they are
+  
   
 }
 
@@ -210,6 +237,11 @@ void CLogic::InputHandler(const SDL_Event& key) {
 	player.InputHandler(key);
 
 	switch (key.type) {
+    case SDL_MOUSEBUTTONDOWN:
+      int x, y;
+      SDL_GetMouseState(&x, &y);
+      PlaceTile(WALL, Vector2(x, y));      
+      break;
 	case SDL_KEYDOWN:
 		switch (key.key.keysym.sym) {
 		case SDLK_t:

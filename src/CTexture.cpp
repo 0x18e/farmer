@@ -1,4 +1,5 @@
 #include "CTexture.h"
+#include <cassert>
 
 
 
@@ -17,8 +18,8 @@ bool CTextureHandler::LoadTexture(const char* path, std::string id) {
 		SDL_QueryTexture(tmp_texture, nullptr, nullptr, &m_nWidth, &m_nHeight);
 
 	}
-	m_Textures[id] = tmp_texture;
-	return m_Textures[id] != nullptr;
+	m_Textures[id] = tmp_texture; // This adds the texture to the list of all textures
+	return m_Textures[id] != nullptr; // this returns whether its null or not
 	
 }
 
@@ -34,6 +35,7 @@ void CTextureHandler::RenderTexture(Vector2 point, SDL_Rect* clip, double angle,
 
 void CTextureHandler::SetCurrentTexture(std::string id) {
 	m_CurrentTexture = m_Textures[id];
+
 	SDL_QueryTexture(m_CurrentTexture, nullptr, nullptr, &m_nWidth, &m_nHeight);
 }
 
@@ -58,8 +60,6 @@ void CTextureHandler::Cleanup() {
 			SDL_DestroyTexture(value.second);
 			LOG("Destroyed " << value.first);
 			value.second = nullptr;
-			
-
 		}
 	}
 	m_Textures.clear();
@@ -70,9 +70,8 @@ void CTextureHandler::Cleanup() {
 		m_nWidth = 0;
 		m_nHeight = 0;
 	}
-
 }
 
 CTextureHandler::~CTextureHandler() {
-	
+  LOG("Cleaning up textures");
 }
