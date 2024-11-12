@@ -3,6 +3,7 @@
 #include "SDL_mouse.h"
 #include "SDL_render.h"
 #include "Utilities.h"
+#include <cassert>
 #include <cmath>
 
 
@@ -30,7 +31,13 @@ void CLogic::Init(SDL_Renderer* renderer, int WindowWidth, int WindowHeight) {
 	SDL_Surface* temp2 = IMG_Load("sprites/bloc.png");
 	adj_texture = SDL_CreateTextureFromSurface(CRenderer::Get().GetRenderer(), temp2);
   
-
+  
+  bool check = m_TextureHandler.LoadTexture("sprites/Tile_Select.png", "tile_select");
+  bool check2 = m_TextureHandler.LoadTexture("sprites/bloc.png", "adjacent_texture"); 
+  if (!check || !check2){
+    LOG("broken texture");
+    assert(false);
+  }
 	SDL_FreeSurface(temp);
 	SDL_FreeSurface(temp2);
 
@@ -66,15 +73,8 @@ void CLogic::DrawGrid() {
       dstRect.w = tiles[y][x].dimensions.x;
       dstRect.h = tiles[y][x].dimensions.y;
        
-      if (tiles[y][x].type == FLOOR) {
-        // Render floor tile
-        m_CurrentTexture = tile_texture;
-      }
-      else if (tiles[y][x].type ==WALL){
-        m_CurrentTexture = adj_texture;
-      }
       SDL_RenderCopy(CRenderer::Get().GetRenderer(), 
-                  m_CurrentTexture, 
+                  tiles[y][x].texture.GetTexture(), 
                   &tile1, &dstRect);
 
 
@@ -94,6 +94,7 @@ void CLogic::PlaceTile(const TileType& tiletype, const Vector2 &tile_pos) {
   // and the tile_position to be replaced
   Vector2 pos = this->FindInGrid(tile_pos); 
   tiles[pos.x][pos.y].type = WALL;
+  tiles[pos.x][pos.y].texture.SetTexture(m_TextureHandler.GetTexture("adjacent_texture"));
   // This changes the type of the tile
   /*
    *
@@ -124,9 +125,11 @@ void CLogic::InitGrid() {
       int rand = GetRandomNumber(0, 2);
       if (rand == 0){
         tile.type = FLOOR;
+        tile.texture.SetTexture(m_TextureHandler.GetTexture("tile_select"));
       }
       else{
         tile.type = WALL;
+        tile.texture.SetTexture(m_TextureHandler.GetTexture("adjacent_texture"));
       }
       
 			row.push_back(tile);
@@ -269,13 +272,16 @@ void CLogic::Cleanup() {
 }
 CLogic::~CLogic() {
 	LOG("Cleaning up logic..");
+  
+  
+  for (int i = 0; i < tiles.size(); ++i){
+    for (int j = 0; j < tiles[i].size(); ++j){
+      tiles[i][j].texture.Clean();
+    }
+  }
 
   SDL_DestroyTexture(m_CurrentTexture);
 	SDL_DestroyTexture(tile_texture);
 	SDL_DestroyTexture(adj_texture);
-  
-	for (auto& grid_texture : grid) {
-		grid_texture.texture.Cleanup();
-	}
 	Cleanup();
 }

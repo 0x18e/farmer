@@ -14,9 +14,7 @@ bool CTextureHandler::LoadTexture(const char* path, std::string id) {
 		return false;
 	}
 	else {
-
 		SDL_QueryTexture(tmp_texture, nullptr, nullptr, &m_nWidth, &m_nHeight);
-
 	}
 	m_Textures[id] = tmp_texture; // This adds the texture to the list of all textures
 	return m_Textures[id] != nullptr; // this returns whether its null or not
@@ -41,8 +39,8 @@ void CTextureHandler::SetCurrentTexture(std::string id) {
 
 
 
-SDL_Texture* CTextureHandler::GetTexture() const {
-	return this->m_CurrentTexture;
+SDL_Texture* CTextureHandler::GetTexture(const std::string& id) {
+	return this->m_Textures[id];
 }
 
 

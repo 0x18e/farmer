@@ -1,5 +1,5 @@
 #pragma once
-#include "SDL_render.h"
+#include "CTexture.h"
 #include "Utilities.h"
 #include<SDL.h>
 #include "CEntity.h"
@@ -17,23 +17,21 @@ struct Tile {
   Vector2 dimensions;
 
   TileType type;
-	CTextureHandler texture; // This is what the texture holds
+  CTexture texture;
 };
 
 class CLogic {
 
 private:
 	SDL_Renderer* m_pRenderer;
-	//std::vector<std::vector<int>> grid;
 	CBasePlayer player;
 	std::vector<CEntity*> m_pEntities;
 	int tile_size = 64;
 	int grid_width;
 	int grid_height;
   SDL_Texture * m_CurrentTexture;
-	//SDL_Rect tiles[grid_width][grid_height];
-	//
-	// std::vector<std::vector<SDL_Rect>> tiles;
+  CTextureHandler m_TextureHandler; 	
+	
   // To place a tile, we need to find out what tile type it is,
   // then its position relative to the players mouse, and if its in an adjacent block
   void PlaceTile(const TileType& tiletype, const Vector2 &tile_pos);
@@ -41,7 +39,6 @@ private:
 
   // Now to write this whole thing using my own stuff
   std::vector<std::vector<Tile>> tiles;
-
   SDL_Texture* adj_texture;
 	SDL_Rect tile1;
 	SDL_Rect tile2;
