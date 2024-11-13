@@ -1,8 +1,19 @@
 #include "CTexture.h"
-#include <cassert>
 
 
+bool CTextureHandler::LoadAllTextures() {
+  
+  // This function should load every texture in the game
+  // The core idea is to loop through all the sprites, and load them all.
+  
+  std::string path_to_sprites = "../sprites/";
+ 
+ 
+  
 
+
+  return true;
+}
 bool CTextureHandler::LoadTexture(const char* path, std::string id) {
 	//this->Cleanup();
 	if (!CRenderer::Get().GetRenderer()) {

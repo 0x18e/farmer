@@ -6,6 +6,10 @@
 #include "CRenderer.h"
 #include <string>
 #include <map>
+#include <filesystem>
+#include <iostream>
+
+
 
 class CTextureHandler {
 
@@ -24,7 +28,7 @@ public:
 	SDL_Texture* GetTexture(const std::string& id);
 	void RenderTexture(Vector2 point, SDL_Rect* clip = nullptr, double angle = 0, SDL_Point* center = nullptr, SDL_RendererFlip fliptype = SDL_RendererFlip::SDL_FLIP_NONE);
 	void SetCurrentTexture(std::string id);
-	
+  bool LoadAllTextures();	
 	
 
 
@@ -50,6 +54,7 @@ public:
   void SetTexture(SDL_Texture* text){
     if (text != nullptr){
       this->m_Texture = text;
+      std::filesystem; 
     }
   }
   SDL_Texture* GetTexture() const {
