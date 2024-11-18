@@ -10,7 +10,9 @@
 enum TileType {
 	EMPTY,
 	FLOOR,
-  WALL,
+	WALL,
+	TILED_DIRT,
+	PLANTED_SEED
 };
 struct Tile { 
   Vector2 position;
@@ -18,6 +20,7 @@ struct Tile {
 
   TileType type;
   CTexture texture;
+  Tile() : position(0, 0), dimensions(0, 0), type(EMPTY) {}
 };
 
 class CLogic {

@@ -7,7 +7,8 @@
 #include <string>
 #include <map>
 #include <filesystem>
-#include <iostream>
+
+
 
 
 
@@ -28,7 +29,7 @@ public:
 	SDL_Texture* GetTexture(const std::string& id);
 	void RenderTexture(Vector2 point, SDL_Rect* clip = nullptr, double angle = 0, SDL_Point* center = nullptr, SDL_RendererFlip fliptype = SDL_RendererFlip::SDL_FLIP_NONE);
 	void SetCurrentTexture(std::string id);
-  bool LoadAllTextures();	
+	bool LoadAllTextures();	
 	
 
 
@@ -54,18 +55,13 @@ public:
   void SetTexture(SDL_Texture* text){
     if (text != nullptr){
       this->m_Texture = text;
-      std::filesystem; 
     }
   }
   SDL_Texture* GetTexture() const {
     return m_Texture;
   }
   void Clean() {
-
-    if (m_Texture != nullptr){
-      LOG("Destroying simple texture");
-      SDL_DestroyTexture(m_Texture);
-    }
+	  this->m_Texture = nullptr;
   }; 
   ~CTexture() {
   } 

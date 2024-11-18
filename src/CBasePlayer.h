@@ -11,8 +11,8 @@ private:
 	int m_nMousePositionX = 0;
 	int m_nMousePositionY = 0;
 	bool m_bIsShooting = false;
-
 	
+	SDL_RendererFlip flip;
 
 	struct DIRECTIONS {
 		int UP = 0;
@@ -27,6 +27,7 @@ public:
 
 	void Init();
 	void Destroy();
+	void Render(SDL_Rect* clip = nullptr, SDL_Point* center = nullptr, SDL_RendererFlip fliptype = SDL_RendererFlip::SDL_FLIP_NONE) override;
 	Vector2 GetPosition() const {
 		return m_Position;
 	}

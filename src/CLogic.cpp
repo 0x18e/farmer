@@ -25,22 +25,14 @@ void CLogic::Init(SDL_Renderer* renderer, int WindowWidth, int WindowHeight) {
 	tile2.h = 32;
 
   
-  m_CurrentTexture = nullptr; 
-	SDL_Surface* temp = IMG_Load("sprites/Tile_Select.png");
-	tile_texture = SDL_CreateTextureFromSurface(CRenderer::Get().GetRenderer(), temp);
-	SDL_Surface* temp2 = IMG_Load("sprites/bloc.png");
-	adj_texture = SDL_CreateTextureFromSurface(CRenderer::Get().GetRenderer(), temp2);
+	
   
-  
-  bool check = m_TextureHandler.LoadTexture("sprites/Tile_Select.png", "tile_select");
-  bool check2 = m_TextureHandler.LoadTexture("sprites/bloc.png", "adjacent_texture"); 
-  if (!check || !check2){
-    LOG("broken texture");
-    assert(false);
-  }
-	SDL_FreeSurface(temp);
-	SDL_FreeSurface(temp2);
-
+	bool check = m_TextureHandler.LoadAllTextures();
+	if (!check) {
+		LOG("textures failed to load");
+		
+	}
+	
 	m_nWindowWidth = WindowWidth;
 	m_nWindowHeight = WindowHeight;
 	grid_width = m_nWindowWidth / tile_size;
@@ -67,15 +59,15 @@ void CLogic::DrawGrid() {
 		for (int x = 0; x < tiles[y].size(); ++x) {
 			// Check for adjacent tiles here
 			// LOG("Drawing tile at " << tiles[x][y].x << " and " << tiles[x][y].y);
-	    SDL_Rect dstRect;
-      dstRect.x = tiles[y][x].position.x;
-      dstRect.y = tiles[y][x].position.y;
-      dstRect.w = tiles[y][x].dimensions.x;
-      dstRect.h = tiles[y][x].dimensions.y;
+		  SDL_Rect dstRect;
+		  dstRect.x = tiles[y][x].position.x;
+		  dstRect.y = tiles[y][x].position.y;
+		  dstRect.w = tiles[y][x].dimensions.x;
+		  dstRect.h = tiles[y][x].dimensions.y;
        
-      SDL_RenderCopy(CRenderer::Get().GetRenderer(), 
-                  tiles[y][x].texture.GetTexture(), 
-                  &tile1, &dstRect);
+		  SDL_RenderCopy(CRenderer::Get().GetRenderer(), 
+					  tiles[y][x].texture.GetTexture(), 
+					  &tile1, &dstRect);
 
 
 			// Adjacency 
@@ -94,7 +86,7 @@ void CLogic::PlaceTile(const TileType& tiletype, const Vector2 &tile_pos) {
   // and the tile_position to be replaced
   Vector2 pos = this->FindInGrid(tile_pos); 
   tiles[pos.x][pos.y].type = WALL;
-  tiles[pos.x][pos.y].texture.SetTexture(m_TextureHandler.GetTexture("adjacent_texture"));
+  tiles[pos.x][pos.y].texture.SetTexture(m_TextureHandler.GetTexture("seeds_ground"));
   // This changes the type of the tile
   /*
    *
@@ -122,15 +114,15 @@ void CLogic::InitGrid() {
 			tile.position.y = y * tile_size;
 			tile.dimensions.x = tile_size;
 			tile.dimensions.y = tile_size;
-      int rand = GetRandomNumber(0, 2);
-      if (rand == 0){
-        tile.type = FLOOR;
-        tile.texture.SetTexture(m_TextureHandler.GetTexture("tile_select"));
-      }
-      else{
-        tile.type = WALL;
-        tile.texture.SetTexture(m_TextureHandler.GetTexture("adjacent_texture"));
-      }
+			int rand = GetRandomNumber(0, 2);
+			if (rand == 0){
+				tile.type = FLOOR;
+				tile.texture.SetTexture(m_TextureHandler.GetTexture("dark_grass"));
+			}
+			else{
+				tile.type = TILED_DIRT;
+				tile.texture.SetTexture(m_TextureHandler.GetTexture("dark_grass"));
+			}
       
 			row.push_back(tile);
 		}
@@ -174,9 +166,7 @@ void CLogic::AddRow() {
 void CLogic::DrawAdjacency(Vector2 tile_position) {
   		Vector2 player_tile_positions = this->FindInGrid(player.GetPosition());
       
-			SDL_SetRenderDrawColor(CRenderer::Get().GetRenderer(), 0, 255, 0, 0);			
-	
-  
+		SDL_SetRenderDrawColor(CRenderer::Get().GetRenderer(), 0, 255, 0, 0);
 }
 Vector2 CLogic::FindInGrid(Vector2 pos) {
 	// Vector2 player_position_origin = player.GetPosition();
@@ -204,7 +194,7 @@ void CLogic::Update(float dt) {
 	
 	player.Move(dt);
 	//this->FindPlayerGrid();
-  // we should check adjacent tiles, and if the player clicks and wishes to place a tile
+	// we should check adjacent tiles, and if the player clicks and wishes to place a tile
   // we check if the adjacent tiles are the same position as the tile of the mouse
   // then we switch out the tiles using the place tiles if they are
   
@@ -223,12 +213,13 @@ void CLogic::Render(){
 	
 	
 
+
+	
+	DrawGrid();
+	DrawAdjacency(Vector2(0, 0));	
 	for (size_t i = 0; i < m_pEntities.size(); ++i) {
 		m_pEntities[i]->Render();
 	}
-	
-	DrawGrid();
-  DrawAdjacency(Vector2(0, 0));	
 
 	// Presenting entities
 	SDL_RenderPresent(CRenderer::Get().GetRenderer());
@@ -243,7 +234,7 @@ void CLogic::InputHandler(const SDL_Event& key) {
     case SDL_MOUSEBUTTONDOWN:
       int x, y;
       SDL_GetMouseState(&x, &y);
-      PlaceTile(WALL, Vector2(x, y));      
+      PlaceTile(PLANTED_SEED, Vector2(x, y));      
       break;
 	case SDL_KEYDOWN:
 		switch (key.key.keysym.sym) {
@@ -273,15 +264,6 @@ void CLogic::Cleanup() {
 CLogic::~CLogic() {
 	LOG("Cleaning up logic..");
   
-  
-  for (int i = 0; i < tiles.size(); ++i){
-    for (int j = 0; j < tiles[i].size(); ++j){
-      tiles[i][j].texture.Clean();
-    }
-  }
 
-  SDL_DestroyTexture(m_CurrentTexture);
-	SDL_DestroyTexture(tile_texture);
-	SDL_DestroyTexture(adj_texture);
 	Cleanup();
 }

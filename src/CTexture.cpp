@@ -6,9 +6,30 @@ bool CTextureHandler::LoadAllTextures() {
   // This function should load every texture in the game
   // The core idea is to loop through all the sprites, and load them all.
   
-  std::string path_to_sprites = "../sprites/";
- 
- 
+  std::string path_to_sprites = "W:\\Projects\\repos\\farmer\\sprites";
+  namespace fs = std::filesystem;
+  try {
+	  for (const auto& entry : fs::directory_iterator(path_to_sprites)) {
+		  if (entry.is_regular_file()) {
+			  std::string filePath = entry.path().string();
+			  std::string filename = entry.path().filename().string();
+			  filename.erase(filename.size() - 4, 4);
+			  bool check = this->LoadTexture(filePath.c_str(), filename);
+			  if (!check) {
+				  LOG("failed to load " << filePath << " " << filename);
+				  return false;
+			  }
+			  else {
+				  LOG("Loaded " << filename);
+			  }
+		  }
+	  }
+  }
+  catch (const std::exception& e){
+	  LOG("Error loading directory");
+	  return false;
+  }
+  return true;
   
 
 
@@ -83,4 +104,5 @@ void CTextureHandler::Cleanup() {
 
 CTextureHandler::~CTextureHandler() {
   LOG("Cleaning up textures");
+  this->Cleanup();
 }

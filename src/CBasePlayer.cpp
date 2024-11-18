@@ -8,10 +8,10 @@ CBasePlayer::CBasePlayer() {
 void CBasePlayer::Init() {
 
 
-	
-	this->m_EntityTexture.SetScale(5);
-	m_EntityTexture.LoadTexture("sprites/Newton.png", "newton");
-	m_EntityTexture.SetCurrentTexture("newton");
+	flip = SDL_RendererFlip::SDL_FLIP_NONE;
+	this->m_EntityTexture.SetScale(2);
+	m_EntityTexture.LoadTexture("sprites/woman.png", "peyton");
+	m_EntityTexture.SetCurrentTexture("peyton");
 	m_Position.x = 400 + (this->GetDimensions().x / 2);
 	m_Position.y = 400 + (this->GetDimensions().y / 2);
 
@@ -39,10 +39,12 @@ void CBasePlayer::InputHandler(const SDL_Event& event) {
 				// Left
 				case SDLK_a:
 					m_MovementDirection.LEFT = 1;
+					flip = SDL_RendererFlip::SDL_FLIP_NONE;
 					break;
 				// Right
 				case SDLK_d:
 					m_MovementDirection.RIGHT = 1;
+					flip = SDL_RendererFlip::SDL_FLIP_HORIZONTAL;
 					break;
 				// Up
 				case SDLK_w:
@@ -127,6 +129,11 @@ void CBasePlayer::Destroy() {
 	m_Position = Vector2(0, 0);
 	m_Velocity = Vector2(0, 0);
 	LOG("Player Destroyed");
+}
+
+void CBasePlayer::Render(SDL_Rect* clip, SDL_Point* center, SDL_RendererFlip fliptype) {
+	
+	m_EntityTexture.RenderTexture(m_Position, nullptr, m_dAngle, center, this->flip);
 }
 
 CBasePlayer::~CBasePlayer() {
