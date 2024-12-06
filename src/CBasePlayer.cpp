@@ -9,7 +9,7 @@ void CBasePlayer::Init() {
 
 
 	flip = SDL_RendererFlip::SDL_FLIP_NONE;
-	this->m_EntityTexture.SetScale(2);
+	this->m_EntityTexture.SetScale(1);
 	m_EntityTexture.LoadTexture("sprites/woman.png", "peyton");
 	m_EntityTexture.SetCurrentTexture("peyton");
 	m_Position.x = 400 + (this->GetDimensions().x / 2);

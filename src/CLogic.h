@@ -29,7 +29,7 @@ private:
 	SDL_Renderer* m_pRenderer;
 	CBasePlayer player;
 	std::vector<CEntity*> m_pEntities;
-	int tile_size = 64;
+	int tile_size = 32;
 	int grid_width;
 	int grid_height;
   SDL_Texture * m_CurrentTexture;
@@ -37,7 +37,7 @@ private:
 	
   // To place a tile, we need to find out what tile type it is,
   // then its position relative to the players mouse, and if its in an adjacent block
-  void PlaceTile(const TileType& tiletype, const Vector2 &tile_pos);
+  void PlaceTile(const TileType& tiletype, const Vector2 &tile_pos, std::string texture_id);
 
 
   // Now to write this whole thing using my own stuff

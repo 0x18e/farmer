@@ -5,35 +5,47 @@ bool CTextureHandler::LoadAllTextures() {
   
   // This function should load every texture in the game
   // The core idea is to loop through all the sprites, and load them all.
+
+#if defined (__WIN32__)
+	LOG("Using windows filesystem to load files");
+	std::string path_to_sprites = "W:\\Projects\\repos\\farmer\\sprites";
+	namespace fs = std::filesystem;
+	try {
+		for (const auto& entry : fs::directory_iterator(path_to_sprites)) {
+			if (entry.is_regular_file()) {
+				std::string filePath = entry.path().string();
+				std::string filename = entry.path().filename().string();
+				filename.erase(filename.size() - 4, 4);
+				bool check = this->LoadTexture(filePath.c_str(), filename);
+				if (!check) {
+					LOG("failed to load " << filePath << " " << filename);
+					return false;
+				}
+				else {
+					LOG("Loaded " << filename);
+				}
+			}
+		}
+	}
+	catch (const std::exception& e) {
+		LOG("Error loading directory");
+		return false;
+	}
+	return true;
+#endif // 
+
+#if defined (__APPLE__)
+	LOG("Using Apple's filesystem method, also write this cause i didnt yet");
+
+#endif // 
+
+
+
   
-  std::string path_to_sprites = "W:\\Projects\\repos\\farmer\\sprites";
-  namespace fs = std::filesystem;
-  try {
-	  for (const auto& entry : fs::directory_iterator(path_to_sprites)) {
-		  if (entry.is_regular_file()) {
-			  std::string filePath = entry.path().string();
-			  std::string filename = entry.path().filename().string();
-			  filename.erase(filename.size() - 4, 4);
-			  bool check = this->LoadTexture(filePath.c_str(), filename);
-			  if (!check) {
-				  LOG("failed to load " << filePath << " " << filename);
-				  return false;
-			  }
-			  else {
-				  LOG("Loaded " << filename);
-			  }
-		  }
-	  }
-  }
-  catch (const std::exception& e){
-	  LOG("Error loading directory");
-	  return false;
-  }
-  return true;
   
 
 
-  return true;
+  return false;
 }
 bool CTextureHandler::LoadTexture(const char* path, std::string id) {
 	//this->Cleanup();
@@ -65,7 +77,6 @@ void CTextureHandler::RenderTexture(Vector2 point, SDL_Rect* clip, double angle,
 
 void CTextureHandler::SetCurrentTexture(std::string id) {
 	m_CurrentTexture = m_Textures[id];
-
 	SDL_QueryTexture(m_CurrentTexture, nullptr, nullptr, &m_nWidth, &m_nHeight);
 }
 

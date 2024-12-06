@@ -81,12 +81,12 @@ void CLogic::DrawGrid() {
 
 
 
-void CLogic::PlaceTile(const TileType& tiletype, const Vector2 &tile_pos) {
+void CLogic::PlaceTile(const TileType& tiletype, const Vector2 &tile_pos, std::string texture_id) {
   // We're given the tile type
   // and the tile_position to be replaced
-  Vector2 pos = this->FindInGrid(tile_pos); 
-  tiles[pos.x][pos.y].type = WALL;
-  tiles[pos.x][pos.y].texture.SetTexture(m_TextureHandler.GetTexture("seeds_ground"));
+  Vector2 pos = this->FindInGrid(tile_pos);
+  tiles[pos.x][pos.y].type = tiletype;
+  tiles[pos.x][pos.y].texture.SetTexture(m_TextureHandler.GetTexture(texture_id));
   // This changes the type of the tile
   /*
    *
@@ -123,7 +123,6 @@ void CLogic::InitGrid() {
 				tile.type = TILED_DIRT;
 				tile.texture.SetTexture(m_TextureHandler.GetTexture("dark_grass"));
 			}
-      
 			row.push_back(tile);
 		}
 		tiles.push_back(row);
@@ -229,12 +228,12 @@ void CLogic::Render(){
 void CLogic::InputHandler(const SDL_Event& key) {
 
 	player.InputHandler(key);
-
+	int x = 0, y = 0;
+	SDL_GetMouseState(&x, &y);
 	switch (key.type) {
     case SDL_MOUSEBUTTONDOWN:
-      int x, y;
-      SDL_GetMouseState(&x, &y);
-      PlaceTile(PLANTED_SEED, Vector2(x, y));      
+      
+      PlaceTile(PLANTED_SEED, Vector2(x, y), "bottom_c");
       break;
 	case SDL_KEYDOWN:
 		switch (key.key.keysym.sym) {
@@ -242,15 +241,40 @@ void CLogic::InputHandler(const SDL_Event& key) {
 			LOG("adding Row");
 			AddRow();
 			break;
+		case SDLK_1:
+
+			PlaceTile(PLANTED_SEED, Vector2(x, y), "top_c");
+			break;
+		case SDLK_2:
+			PlaceTile(PLANTED_SEED, Vector2(x, y), "left_c");
+			break;
+		case SDLK_3:
+
+			PlaceTile(PLANTED_SEED, Vector2(x, y), "right_c");
+			break;
+		case SDLK_4:
+
+			PlaceTile(PLANTED_SEED, Vector2(x, y), "topleft_c");
+			break;
+		case SDLK_5:
+
+			PlaceTile(PLANTED_SEED, Vector2(x, y), "topright_c");
+			break;
+		case SDLK_6:
+
+			PlaceTile(PLANTED_SEED, Vector2(x, y), "bottomleft_c");
+			break;
+		case SDLK_7:
+
+			PlaceTile(PLANTED_SEED, Vector2(x, y), "bottomright_c");
+			break;
+		case SDLK_8:
+			PlaceTile(PLANTED_SEED, Vector2(x, y), "seeds_ground");
+			break;
 		default:
 			break;
 		}
 	}
-
-
-
-
-
 	// Pass input wherever it is required
 }
 

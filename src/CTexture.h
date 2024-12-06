@@ -65,7 +65,4 @@ public:
   }; 
   ~CTexture() {
   } 
-   
-
-
 };
